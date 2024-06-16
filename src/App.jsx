@@ -4,6 +4,9 @@ import { SquarePlus, X } from 'lucide-react'
 import './app.css'
 import TodoList from './Components/TodoList'
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 
 const App = () => {
@@ -23,25 +26,17 @@ const addTodo = () => {
       createdAt: new Date().toLocaleDateString(),
     };
 
-    // Retrieve existing todos from localStorage
     const existingTodos = localStorage.getItem('@todos') ? JSON.parse(localStorage.getItem('@todos')) : [];
-
-    // Update the todo array with the new task
     const updatedTodos = [...existingTodos, newTask];
 
-    // Set the updated todo array to the local state
     setTodo(updatedTodos);
-
-    // Clear the input value
     setInputValue('');
 
-    // Save the updated todo array to localStorage
     localStorage.setItem('@todos', JSON.stringify(updatedTodos));
-
-    // Close the modal
     setModal(!modal);
+    toast.success('Tarefa criada com sucesso')
   } else {
-    alert('Digite sua tarefa');
+    toast.error('Digite uma tarefa')
   }
 };
 
@@ -49,7 +44,7 @@ const deleteTask = (id) => {
   const newTodos = [...todo].filter(todo => todo.id !== id ? todo : null);
   setTodo(newTodos);
   localStorage.setItem('@todos', JSON.stringify(newTodos))
-  console.log(id);
+  toast.success('Tarefa concluida com sucesso')
 };
 
   useEffect(() => {
@@ -60,7 +55,8 @@ const deleteTask = (id) => {
   }, []);
 
   return (
-    
+    <>
+    <ToastContainer autoClose={3000}/>
     <div className='container'>
        {modal === false ? (
           <div>
@@ -71,11 +67,11 @@ const deleteTask = (id) => {
             <div className="modal_content">
               <div className="header">
                 <span>Adicione suas novas tarefas</span>
-                <X onClick={() => setModal(!modal)}/>
+                <X onClick={() => setModal(!modal)} cursor={'pointer'}/>
               </div>
               <div className="modal_form">
-                <div>
                   <input type='text' value={inputValue} onChange={handleInputChange}/>
+                <div className='btn'>
                   <button onClick={addTodo} type='button'>Criar tarefa</button>
                 </div>
               </div>
@@ -103,6 +99,7 @@ const deleteTask = (id) => {
         </div>
       </div>
    </div>
+   </>
   )
 }
 
